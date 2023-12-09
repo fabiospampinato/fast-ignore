@@ -71,9 +71,16 @@ describe ( 'Fast Ignore', () => {
       t.is ( glob ( 'foo[0-5]bar', 'foo7bar' ), false );
       t.is ( glob ( 'foo[0-5]bar', 'foo00bar' ), false );
 
+      t.is ( glob ( 'foo[0-z]bar', 'fooabar' ), true );
+      t.is ( glob ( 'foo[0-z]bar', 'fooAbar' ), true );
+      t.is ( glob ( 'foo[0-z]bar', 'foo9bar' ), true );
+      t.is ( glob ( 'foo[0-z]bar', 'foo>bar' ), true );
+      t.is ( glob ( 'foo[0-z]bar', 'fooaabar' ), false );
+
       t.is ( glob ( 'foo[a-zA-Z0-9]bar', 'fooabar' ), true );
       t.is ( glob ( 'foo[a-zA-Z0-9]bar', 'fooAbar' ), true );
       t.is ( glob ( 'foo[a-zA-Z0-9]bar', 'foo9bar' ), true );
+      t.is ( glob ( 'foo[a-zA-Z0-9]bar', 'foo>bar' ), false );
       t.is ( glob ( 'foo[a-zA-Z0-9]bar', 'fooaabar' ), false );
 
       t.is ( glob ( 'foo[abc]bar', 'fooabar' ), true );
