@@ -1,0 +1,36 @@
+{
+  "name": "fast-ignore",
+  "repository": "github:fabiospampinato/fast-ignore",
+  "description": "A fast parser and processor for .gitignore files.",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "benchmark": "tsex benchmark",
+    "benchmark:watch": "tsex benchmark --watch",
+    "benchmark:prepare": "cd tasks && git clone https://github.com/babel/babel.git",
+    "clean": "tsex clean",
+    "compile": "tsex compile",
+    "compile:watch": "tsex compile --watch",
+    "test": "tsex test",
+    "test:watch": "tsex test --watch",
+    "prepublishOnly": "tsex prepare"
+  },
+  "keywords": [
+    "fast",
+    "gitignore",
+    "dotignore",
+    "ignore"
+  ],
+  "dependencies": {
+    "grammex": "^3.1.2"
+  },
+  "devDependencies": {
+    "benchloop": "^2.1.1",
+    "fava": "^0.3.1",
+    "tsex": "^3.0.1",
+    "typescript": "^5.3.3"
+  }
+}
