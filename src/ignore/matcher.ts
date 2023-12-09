@@ -8,10 +8,11 @@ import type {Node, Options} from '../types';
 
 /* MAIN */
 
-const matcher = ( ignore: string, options: Options = {} ): (( fileRelativePath: string ) => boolean) => {
+const matcher = ( ignore: string | string[], options: Options = {} ): (( fileRelativePath: string ) => boolean) => {
 
-  const globs = parse ( ignore );
-  const root = compile ( globs, options );
+  const ignores = Array.isArray ( ignore ) ? ignore : [ignore];
+  const tiers = ignores.map ( parse );
+  const root = compile ( tiers, options );
   const cache: [segment: string, [nodesNext: Node[], negative: boolean, strength: number]][] = []; //TODO: What is this kind of cache called??
 
   return ( fileRelativePath: string ): boolean => { //TODO: Add an "isDirectory" option here, to properly account for globs ending with a slash

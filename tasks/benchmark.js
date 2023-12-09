@@ -39,9 +39,27 @@ benchmark ({
 });
 
 benchmark ({
-  name: '.gitignore + .prettierignore',
+  name: '.gitignore + .prettierignore (individual)',
+  fn: () => {
+    const ignore1 = toIgnore ( gitignoreContent );
+    const ignore2 = toIgnore ( prettierignoreContent );
+    filesPaths.forEach ( ignore1 );
+    filesPaths.forEach ( ignore2 );
+  }
+});
+
+benchmark ({
+  name: '.gitignore + .prettierignore (concat)',
   fn: () => {
     const ignore = toIgnore ( comboContent );
+    filesPaths.forEach ( ignore );
+  }
+});
+
+benchmark ({
+  name: '.gitignore + .prettierignore (combo)',
+  fn: () => {
+    const ignore = toIgnore ([ gitignoreContent, prettierignoreContent ]);
     filesPaths.forEach ( ignore );
   }
 });

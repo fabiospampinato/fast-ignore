@@ -6,50 +6,60 @@ import type {Glob, Node, Options} from '../types';
 
 /* MAIN */
 
-const compile = ( globs: Glob[], options: Options ): Node => {
+const compile = ( tiers: Glob[][], options: Options ): Node => {
 
   const caseSensitive = options.caseSensitive ?? false;
-  const root: Node = { id: '', globstar: false, negative: false, strength: -1, match: () => false, children: [] };
+  const root: Node = { id: '', globstar: false, negative: false, strength: -1, tier: -1, match: () => false, children: [] };
 
-  for ( let gi = 0, gl = globs.length; gi < gl; gi++ ) {
+  let scounter = 0;
 
-    let content = globs[gi].content;
-    let parent = root;
+  for ( let ti = 0, tl = tiers.length; ti < tl; ti++ ) {
 
-    content = content.replace ( /\/$/, '' ); //TODO: Handle this instead
-    content = content.replace ( /(^|\/)\*\*\/(?:\*\*(\/|$))+/g, '$1**$2' );
-    content = content.startsWith ( '/' ) ? content.slice ( 1 ) : ( content.startsWith ( '**/' ) || content.slice ( 0, -1 ).includes ( '/' ) ? content : `**/${content}` );
+    const globs = tiers[ti];
+    const tier = ti;
 
-    const segments = content.split ( '/' );
+    for ( let gi = 0, gl = globs.length; gi < gl; gi++ ) {
 
-    for ( let si = 0, sl = segments.length; si < sl; si++ ) {
+      let content = globs[gi].content;
+      let parent = root;
 
-      const id = segments[si];
-      const globstar = ( id === '**' );
-      const terminal = ( si === sl - 1 );
-      const negative = globs[gi].negative;
-      const strength = ( terminal ? globs[gi].strength : -1 );
-      const match = matcher ( id, caseSensitive );
-      const children: Node[] = [];
-      const node = { id, globstar, negative, strength, match, children };
-      const nodeExisting = parent.children.find ( node => node.id === id );
+      content = content.replace ( /\/$/, '' ); //TODO: Handle this instead
+      content = content.replace ( /(^|\/)\*\*\/(?:\*\*(\/|$))+/g, '$1**$2' );
+      content = content.startsWith ( '/' ) ? content.slice ( 1 ) : ( content.startsWith ( '**/' ) || content.slice ( 0, -1 ).includes ( '/' ) ? content : `**/${content}` );
 
-      if ( nodeExisting ) {
+      const segments = content.split ( '/' );
 
-        if ( strength >= nodeExisting.strength ) { // Existing weaker node, overriding it
+      for ( let si = 0, sl = segments.length; si < sl; si++ ) {
 
-          nodeExisting.negative = negative;
-          nodeExisting.strength = strength;
+        const id = segments[si];
+        const globstar = ( id === '**' );
+        const terminal = ( si === sl - 1 );
+        const negative = globs[gi].negative;
+        const strength = ( terminal ? scounter++ : -1 );
+        const match = matcher ( id, caseSensitive );
+        const children: Node[] = [];
+        const node = { id, globstar, negative, strength, tier, match, children };
+        const nodeExisting = parent.children.find ( node => node.id === id );
+
+        if ( nodeExisting ) {
+
+          if ( ( tier === nodeExisting.tier && strength >= nodeExisting.strength ) || ( tier > nodeExisting.tier && ( nodeExisting.strength < 0 || nodeExisting.negative ) ) ) { // Existing node, overridable by tier/strength/negativity // Basically we are making sure that files ignored in previous tiers can't be re-included back in later tiers
+
+            nodeExisting.negative = negative;
+            nodeExisting.strength = strength;
+            nodeExisting.tier = tier;
+
+          }
+
+          parent = nodeExisting;
+
+        } else {
+
+          parent.children.push ( node );
+
+          parent = node;
 
         }
-
-        parent = nodeExisting;
-
-      } else {
-
-        parent.children.push ( node );
-
-        parent = node;
 
       }
 

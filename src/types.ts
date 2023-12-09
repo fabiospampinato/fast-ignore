@@ -3,8 +3,7 @@
 
 type Glob = {
   content: string,
-  negative: boolean,
-  strength: number
+  negative: boolean
 };
 
 type Node = {
@@ -12,6 +11,7 @@ type Node = {
   globstar: boolean,
   negative: boolean,
   strength: number,
+  tier: number,
   match: ( segment: string ) => boolean,
   children: Node[]
 };

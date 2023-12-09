@@ -18,13 +18,12 @@ const parse = ( ignore: string ): Glob[] => {
     if ( content.startsWith ( '#' ) ) continue;
 
     const negative = content.startsWith ( '!' );
-    const strength = i;
 
     content = content.replace ( /^\\(!|#)/, '$1' );
     content = content.replace ( /((?:\\\s)*)\s*$/, ( $0, $1 ) => $1.replaceAll ( '\\', '' ) );
     content = negative ? content.slice ( 1 ) : content;
 
-    const glob = { content, negative, strength };
+    const glob = { content, negative };
 
     globs.push ( glob );
 

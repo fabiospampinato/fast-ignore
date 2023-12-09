@@ -45,6 +45,28 @@ const ignore = fastIgnore ( gitignore );
 ignore ( 'foo/bar.js' ); // false
 ignore ( 'node_modules/foo/bar.js' ); // true
 ignore ( 'dist/foo/bar.js' ); // true
+
+// We can also work with multiple ignore files at once, which is faster than handling them individually
+// This goes roughly as fast as just concatenating the files together, but with the semantics of separate files
+// The difference is that an ignore file that comes later won't be able to un-ignore something that was ignored by a previous one
+// As a result please note that writing `fastIgnore ([ 'dist', '!dist' ])` may work differently than you expected
+
+const prettierignore = `
+**/test
+**/__test__
+
+# The following globs are effectively useless
+# because they can't un-ignore something that was ignored by any previous ignore files
+!dist
+!node_modules
+`;
+
+const comboIgnore = fastIgnore ([ gitignore, prettierignore ]);
+
+comboIgnore ( 'foo/bar.js' ); // false
+comboIgnore ( 'node_modules/foo/bar.js' ); // true
+comboIgnore ( 'dist/foo/bar.js' ); // true
+comboIgnore ( 'test/foo/bar.js' ); // true
 ```
 
 ## License

@@ -104,7 +104,7 @@ describe ( 'Fast Ignore', () => {
 
   describe ( 'ignore', it => {
 
-    it ( 'works', t => {
+    it ( 'works with a single tier', t => {
 
       t.is ( ignore ( 'foo.js', 'foo.js' ), true );
       t.is ( ignore ( 'foo.js', 'deep/foo.js' ), true );
@@ -193,8 +193,37 @@ describe ( 'Fast Ignore', () => {
       t.is ( ignore ( 'd*p/foo.js', 'deep/foo.js', true ), true );
       t.is ( ignore ( 'd*p/foo.js', 'DeEp/FoO.jS', true ), false );
 
-      // t.is ( ignore ( 'foo.js/', 'foo.js' ), true ); //TODO
-      // t.is ( ignore ( 'foo.js/', 'deep/foo.js' ), true ); //TODO
+    });
+
+    it ( 'works with multiple tiers', t => {
+
+      t.is ( ignore ( ['foo.js', 'bar.js'], 'foo.js' ), true );
+      t.is ( ignore ( ['foo.js', 'bar.js'], 'bar.js' ), true );
+      t.is ( ignore ( ['foo.js', 'bar.js'], 'baz.js' ), false );
+
+      t.is ( ignore ( ['foo.js', '!foo.js'], 'foo.js' ), true );
+      t.is ( ignore ( ['foo.js', '!foo.js'], 'bar.js' ), false );
+      t.is ( ignore ( ['foo.js', '!foo.js'], 'baz.js' ), false );
+
+      t.is ( ignore ( ['foo.js\n!foo.js', 'foo.js'], 'foo.js' ), true );
+      t.is ( ignore ( ['foo.js\n!foo.js', 'foo.js'], 'bar.js' ), false );
+      t.is ( ignore ( ['foo.js\n!foo.js', 'foo.js'], 'baz.js' ), false );
+
+      t.is ( ignore ( ['foo.js\n!foo.js', 'bar.js'], 'foo.js' ), false );
+      t.is ( ignore ( ['foo.js\n!foo.js', 'bar.js'], 'bar.js' ), true );
+      t.is ( ignore ( ['foo.js\n!foo.js', 'bar.js'], 'baz.js' ), false );
+
+      t.is ( ignore ( ['deep\n!deep', 'deep/foo.js'], 'deep/foo.js' ), true );
+      t.is ( ignore ( ['deep\n!deep', 'deep/foo.js'], 'deeper/deep/foo.js' ), false );
+      t.is ( ignore ( ['deep\n!deep', 'deep/foo.js'], 'deeper/deep/bar.js' ), false );
+
+      t.is ( ignore ( ['deep', 'deep/foo.js'], 'deep/foo.js' ), true );
+      t.is ( ignore ( ['deep', 'deep/foo.js'], 'deeper/deep/foo.js' ), true );
+      t.is ( ignore ( ['deep', 'deep/foo.js'], 'deeper/deep/bar.js' ), true );
+
+      t.is ( ignore ( ['deep', '!deep/foo.js'], 'deep/foo.js' ), true );
+      t.is ( ignore ( ['deep', '!deep/foo.js'], 'deeper/deep/foo.js' ), true );
+      t.is ( ignore ( ['deep', '!deep/foo.js'], 'deeper/deep/bar.js' ), true );
 
     });
 
