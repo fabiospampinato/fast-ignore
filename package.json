@@ -2,7 +2,7 @@
   "name": "fast-ignore",
   "repository": "github:fabiospampinato/fast-ignore",
   "description": "A fast parser and processor for .gitignore files.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "main": "dist/index.js",
   "exports": "./dist/index.js",
