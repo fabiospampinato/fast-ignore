@@ -11,7 +11,10 @@ import type {Node, Options} from '../types';
 const matcher = ( ignore: string | string[], options: Options = {} ): (( fileRelativePath: string ) => boolean) => {
 
   const ignores = Array.isArray ( ignore ) ? ignore : [ignore];
-  const tiers = ignores.map ( parse );
+  const tiers = ignores.map ( parse ).filter ( tier => !!tier.length );
+
+  if ( !tiers.length ) return () => false;
+
   const root = compile ( tiers, options );
   const cache: [segment: string, [nodesNext: Node[], negative: boolean, strength: number]][] = []; //TODO: What is this kind of cache called??
 
