@@ -20,15 +20,30 @@ const matcher = ( ignore: string | string[], options: Options = {} ): (( fileRel
 
   return ( fileRelativePath: string ): boolean => { //TODO: Add an "isDirectory" option here, to properly account for globs ending with a slash
 
-    const segments = fileRelativePath.split ( /[\\/]+/g );
+    const sep = fileRelativePath.includes ( '/' ) ? '/' : '\\';
+    const length = fileRelativePath.length;
 
     let nodes = [root];
     let cacheable = true;
 
-    for ( let i = 0, l = segments.length; i < l; i++ ) {
+    let segmentIndex = 0;
+    let segmentIndexNext = 0;
+    let segmentNth = -1;
+    let segment = '';
 
-      const segment = segments[i];
-      const cached = ( i < cache.length - 1 ) ? cache[i] : undefined;
+    while ( segmentIndex < length ) {
+
+      segmentIndexNext = fileRelativePath.indexOf ( sep, segmentIndex );
+      segmentIndexNext = ( segmentIndexNext === -1 ) ? length : segmentIndexNext;
+
+      segment = fileRelativePath.slice ( segmentIndex, segmentIndexNext );
+      segmentIndex = segmentIndexNext + 1;
+
+      if ( !segment.length ) continue; // Consecutive slash
+
+      segmentNth += 1;
+
+      const cached = ( segmentNth < cache.length - 1 ) ? cache[segmentNth] : undefined;
       const cachedResult: [Node[], boolean, number] | undefined = cacheable && cached && cached[0] === segment ? cached[1] : undefined;
       const result = cachedResult || tick ( nodes, segment );
 
@@ -39,7 +54,7 @@ const matcher = ( ignore: string | string[], options: Options = {} ): (( fileRel
           cached[0] = segment;
           cached[1] = result;
         } else {
-          cache[i] = [segment, result];
+          cache[segmentNth] = [segment, result];
         }
       }
 
