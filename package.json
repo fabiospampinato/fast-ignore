@@ -25,7 +25,8 @@
     "ignore"
   ],
   "dependencies": {
-    "grammex": "^3.1.2"
+    "grammex": "^3.1.2",
+    "string-escape-regex": "^1.0.0"
   },
   "devDependencies": {
     "benchloop": "^2.1.1",
