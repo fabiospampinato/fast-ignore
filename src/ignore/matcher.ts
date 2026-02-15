@@ -16,7 +16,7 @@ const matcher = ( ignore: string | string[], options: Options = {} ): (( relativ
   if ( !tiers.length ) return () => false;
 
   const root = compile ( tiers, options );
-  const cache: [result: Tick, segment: string, isSegmentDirectory: boolean][] = []; // Prefix-caching tick outputs by segment
+  const cache: { result: Tick, segment: string, isSegmentDirectory: boolean }[] = []; // Prefix-caching tick outputs by segment
 
   return ( relativePath: string, isDirectory: boolean = false ): boolean => {
 
@@ -46,18 +46,18 @@ const matcher = ( ignore: string | string[], options: Options = {} ): (( relativ
       segmentNth += 1;
 
       const cached = ( segmentNth < cache.length - 1 ) ? cache[segmentNth] : undefined;
-      const cachedResult: Tick | undefined = cacheable && cached && cached[1] === segment && cached[2] === isSegmentDirectory ? cached[0] : undefined;
+      const cachedResult: Tick | undefined = cacheable && cached && cached.segment === segment && cached.isSegmentDirectory === isSegmentDirectory ? cached.result : undefined;
       const result: Tick = cachedResult || tick ( nodes, segment, isSegmentDirectory );
 
       cacheable = !!cachedResult;
 
       if ( !cachedResult ) {
         if ( cached ) {
-          cached[0] = result;
-          cached[1] = segment;
-          cached[2] = isSegmentDirectory;
+          cached.result = result;
+          cached.segment = segment;
+          cached.isSegmentDirectory = isSegmentDirectory;
         } else {
-          cache[segmentNth] = [result, segment, isSegmentDirectory];
+          cache[segmentNth] = { result, segment, isSegmentDirectory };
         }
       }
 
