@@ -282,6 +282,18 @@ describe ( 'Fast Ignore', () => {
       t.is ( ignore ( '**/logs/', 'src/logs', false, true ), true );
       t.is ( ignore ( '**/logs/', 'src/logs', false, false ), false );
 
+      t.is ( ignore ( 'foo\nfoo/', 'foo' ), true );
+      t.is ( ignore ( 'foo\nfoo/', 'foo', false, false ), true );
+      t.is ( ignore ( 'foo\nfoo/', 'foo', false, true ), true );
+
+      t.is ( ignore ( 'foo/\nfoo', 'foo' ), true );
+      t.is ( ignore ( 'foo/\nfoo', 'foo', false, false ), true );
+      t.is ( ignore ( 'foo/\nfoo', 'foo', false, true ), true );
+
+      t.is ( ignore ( 'foo/\nfoo/bar', 'foo' ), false );
+      t.is ( ignore ( 'foo/\nfoo/bar', 'foo', false, false ), false );
+      t.is ( ignore ( 'foo/\nfoo/bar', 'foo', false, true ), true );
+
     });
 
   });

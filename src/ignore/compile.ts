@@ -43,7 +43,7 @@ const compile = ( tiers: Glob[][], options: Options ): Node => {
 
           if ( ( tier === nodeExisting.tier && strength >= nodeExisting.strength ) || ( tier > nodeExisting.tier && ( nodeExisting.strength < 0 || nodeExisting.negative ) ) ) { // Existing node, overridable by tier/strength/negativity // Basically we are making sure that files ignored in previous tiers can't be re-included back in later tiers
 
-            nodeExisting.directory = directory;
+            nodeExisting.directory &&= directory;
             nodeExisting.negative = negative;
             nodeExisting.strength = strength;
             nodeExisting.tier = tier;
