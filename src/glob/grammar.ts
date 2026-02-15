@@ -16,7 +16,7 @@ const Passthrough = match ( /./, passthrough );
 
 const Star = match ( /\*+/, '.*' );
 
-const Question = match ( '?', '.?' );
+const Question = match ( '?', '[^/]' );
 
 const ClassOpen = match ( '[', passthrough );
 const ClassClose = match ( ']', passthrough );

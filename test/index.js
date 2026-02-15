@@ -29,11 +29,15 @@ describe ( 'Fast Ignore', () => {
       t.is ( glob ( '\\?', 'a' ), false );
       t.is ( glob ( '\\?', '?' ), true );
 
-      t.is ( glob ( '?', '' ), true );
+      t.is ( glob ( '?', '' ), false );
+      t.is ( glob ( '?', '/' ), false );
+      t.is ( glob ( '?', '\\' ), true );
       t.is ( glob ( '?', 'a' ), true );
       t.is ( glob ( '?', 'aaa' ), false );
 
-      t.is ( glob ( 'foo?bar', 'foobar' ), true );
+      t.is ( glob ( 'foo?bar', 'foobar' ), false );
+      t.is ( glob ( 'foo?bar', 'foo/bar' ), false );
+      t.is ( glob ( 'foo?bar', 'foo\\bar' ), true );
       t.is ( glob ( 'foo?bar', 'fooabar' ), true );
       t.is ( glob ( 'foo?bar', 'fooaaabar' ), false );
 
