@@ -20,11 +20,11 @@ type Options = {
   caseSensitive?: boolean
 };
 
-type Tick = [
-  nodesNext: Node[],
+type Tick = {
+  nodes: Node[],
   negative: boolean,
   strength: number
-];
+};
 
 /* EXPORT */
 

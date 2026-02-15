@@ -58,9 +58,9 @@ const matcher = ( ignore: string | string[], options: Options = {} ): (( fileRel
         }
       }
 
-      if ( result[2] >= 0 && !result[1] ) return true;
+      if ( result.strength >= 0 && !result.negative ) return true;
 
-      nodes = result[0];
+      nodes = result.nodes;
 
       if ( !nodes.length ) return false;
 

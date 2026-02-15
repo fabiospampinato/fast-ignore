@@ -7,17 +7,14 @@ import type {Node, Tick} from '../types';
 
 // This function basically moves each pointer forward on the trie by just 1 non-globstar step, if possible
 
-const tick = ( nodes: Node[], segment: string ): Tick => {
+const tick = ( _nodes: Node[], segment: string ): Tick => {
 
-  const nodesCurr: Node[] = nodes.slice ();
-  const nodesNext: Node[] = [];
+  const result: Tick = { nodes: [], negative: false, strength: -1 };
+  const nodes: Node[] = _nodes.slice ();
 
-  let negative = false;
-  let strength = -1;
+  for ( let ni = 0; ni < nodes.length; ni++ ) { // Ticking from each node
 
-  for ( let ni = 0; ni < nodesCurr.length; ni++ ) { // Ticking from each node
-
-    const node = nodesCurr[ni];
+    const node = nodes[ni];
     const {children} = node;
 
     for ( let ci = 0, cl = children.length; ci < cl; ci++ ) { // Matching children
@@ -26,10 +23,10 @@ const tick = ( nodes: Node[], segment: string ): Tick => {
 
       if ( !nodeNext.match ( segment ) ) continue;
 
-      if ( nodeNext.strength >= strength ) { // Stronger result found
+      if ( nodeNext.strength >= result.strength ) { // Stronger result found
 
-        negative = nodeNext.negative;
-        strength = nodeNext.strength;
+        result.negative = nodeNext.negative;
+        result.strength = nodeNext.strength;
 
       }
 
@@ -37,11 +34,11 @@ const tick = ( nodes: Node[], segment: string ): Tick => {
 
         if ( nodeNext.globstar ) { // Keep going for this pointer within this tick
 
-          nodesCurr.push ( nodeNext );
+          nodes.push ( nodeNext );
 
         } else { // Stopping for this pointer within this tick
 
-          nodesNext.push ( nodeNext );
+          result.nodes.push ( nodeNext );
 
         }
 
@@ -51,20 +48,20 @@ const tick = ( nodes: Node[], segment: string ): Tick => {
 
     if ( node.globstar ) { // Keep matching self
 
-      if ( node.strength >= strength ) { // Stronger result found
+      if ( node.strength >= result.strength ) { // Stronger result found
 
-        negative = node.negative;
-        strength = node.strength;
+        result.negative = node.negative;
+        result.strength = node.strength;
 
       }
 
-      nodesNext.push ( node );
+      result.nodes.push ( node );
 
     }
 
   }
 
-  return [nodesNext, negative, strength];
+  return result;
 
 };
 
