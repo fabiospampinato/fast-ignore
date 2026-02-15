@@ -22,6 +22,10 @@ type Options = {
   caseSensitive?: boolean
 };
 
+type PathOptions = {
+  isDirectory?: boolean
+};
+
 type Tick = {
   nodes: Node[],
   negative: boolean,
@@ -30,4 +34,4 @@ type Tick = {
 
 /* EXPORT */
 
-export type {Glob, Node, Options, Tick};
+export type {Glob, Node, Options, PathOptions, Tick};

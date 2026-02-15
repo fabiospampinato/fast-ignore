@@ -54,10 +54,10 @@ ignore ( 'dir/foo.js' ); // true
 
 // Directory-only globs are supported _manually_ when the situation is ambiguous
 // In the following scenario we can't know for sure if "dir" is a file or a directory
-// We are going to assume it's not a directory, but if it is you need to tell the library by passing "true" as the second argument
+// We are going to assume it's not a directory, but if it is then you need to tell the library via the options object
 
 ignore ( 'dir' ); // false
-ignore ( 'dir', true ); // true
+ignore ( 'dir', { isDirectory: true } ); // true
 
 // We can also work with multiple ignore files at once, which is faster than handling them individually
 // This goes roughly as fast as just concatenating the files together, but with the semantics of separate files

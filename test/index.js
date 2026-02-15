@@ -8,7 +8,7 @@ import toIgnoreMatch from '../dist/ignore/matcher.js';
 /* HELPERS */
 
 const glob = ( glob, segment ) => toGlobMatch ( glob, true )( segment );
-const ignore = ( ignore, relativePath, caseSensitive, isDirectory ) => toIgnoreMatch ( ignore, { caseSensitive } )( relativePath, isDirectory );
+const ignore = ( ignore, relativePath, caseSensitive, isDirectory ) => toIgnoreMatch ( ignore, { caseSensitive } )( relativePath, { isDirectory } );
 
 /* MAIN */
 

@@ -4,11 +4,11 @@
 import compile from './compile';
 import parse from './parse';
 import tick from './tick';
-import type {Options, Tick} from '../types';
+import type {Options, PathOptions, Tick} from '../types';
 
 /* MAIN */
 
-const matcher = ( ignore: string | string[], options: Options = {} ): (( relativePath: string, isDirectory?: boolean ) => boolean) => {
+const matcher = ( ignore: string | string[], options: Options = {} ): (( relativePath: string, options?: PathOptions ) => boolean) => {
 
   const ignores = Array.isArray ( ignore ) ? ignore : [ignore];
   const tiers = ignores.map ( parse ).filter ( tier => !!tier.length );
@@ -18,7 +18,9 @@ const matcher = ( ignore: string | string[], options: Options = {} ): (( relativ
   const root = compile ( tiers, options );
   const cache: { result: Tick, segment: string, isSegmentDirectory: boolean }[] = []; // Prefix-caching tick outputs by segment
 
-  return ( relativePath: string, isDirectory: boolean = false ): boolean => {
+  return ( relativePath: string, options?: PathOptions ): boolean => {
+
+    const isDirectory = options?.isDirectory ?? false;
 
     const sep = relativePath.includes ( '/' ) ? '/' : '\\';
     const length = relativePath.length;
