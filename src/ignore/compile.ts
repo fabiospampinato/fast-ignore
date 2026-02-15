@@ -20,13 +20,10 @@ const compile = ( tiers: Glob[][], options: Options ): Node => {
 
     for ( let gi = 0, gl = globs.length; gi < gl; gi++ ) {
 
-      let content = globs[gi].content;
       let parent = root;
 
-      content = content.replace ( /\/$/, '' ); //TODO: Handle this instead
-      content = content.replace ( /(^|\/)\*\*\/(?:\*\*(\/|$))+/g, '$1**$2' );
-      content = content.startsWith ( '/' ) ? content.slice ( 1 ) : ( content.startsWith ( '**/' ) || content.slice ( 0, -1 ).includes ( '/' ) ? content : `**/${content}` );
-
+      const glob = globs[gi];
+      const content = glob.content;
       const segments = content.split ( '/' );
 
       for ( let si = 0, sl = segments.length; si < sl; si++ ) {
@@ -34,7 +31,7 @@ const compile = ( tiers: Glob[][], options: Options ): Node => {
         const id = segments[si];
         const globstar = ( id === '**' );
         const terminal = ( si === sl - 1 );
-        const negative = globs[gi].negative;
+        const negative = glob.negative;
         const strength = ( terminal ? scounter++ : -1 );
         const match = matcher ( id, caseSensitive );
         const children: Node[] = [];

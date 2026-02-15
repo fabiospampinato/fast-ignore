@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import normalize from '../glob/normalize';
 import type {Glob} from '../types';
 
 /* MAIN */
@@ -19,9 +20,8 @@ const parse = ( ignore: string ): Glob[] => {
 
     const negative = content.startsWith ( '!' );
 
-    content = content.replace ( /^\\(!|#)/, '$1' );
-    content = content.replace ( /((?:\\\s)*)\s*$/, ( $0, $1 ) => $1.replaceAll ( '\\', '' ) );
     content = negative ? content.slice ( 1 ) : content;
+    content = normalize ( content );
 
     const glob = { content, negative };
 
