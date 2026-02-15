@@ -155,6 +155,22 @@ describe ( 'Fast Ignore', () => {
       t.is ( ignore ( '\\!foo.js', 'bar.js' ), false );
       t.is ( ignore ( '\\!foo.js', '!foo.js' ), true );
 
+      t.is ( ignore ( '\\f\\o\\o\\.\\j\\s', 'foo.js' ), true );
+
+      t.is ( ignore ( '\\*', '*' ), true );
+      t.is ( ignore ( '\\*', 'foo' ), false );
+
+      t.is ( ignore ( '\\*\\*', '**' ), true );
+      t.is ( ignore ( '\\*\\*', 'foo' ), false );
+
+      t.is ( ignore ( '\\?', '?' ), true );
+      t.is ( ignore ( '\\?', 'a' ), false );
+
+      t.is ( ignore ( '\\[a-z]', '[a-z]' ), true );
+      t.is ( ignore ( '\\[a-z]', 'a' ), false );
+      t.is ( ignore ( '\\[a-z\\]', '[a-z]' ), true );
+      t.is ( ignore ( '\\[a-z\\]', 'a' ), false );
+
       t.is ( ignore ( 'foo.js  ', 'foo.js' ), true );
       t.is ( ignore ( 'foo.js  ', 'foo.js ' ), false );
       t.is ( ignore ( 'foo.js\\  ', 'foo.js' ), false );
@@ -196,6 +212,7 @@ describe ( 'Fast Ignore', () => {
       t.is ( ignore ( '**/**/**', 'foo.js' ), true );
       t.is ( ignore ( '**/**/**', 'deep/foo.js' ), true );
       t.is ( ignore ( '**/**/**', 'deep/deeper/foo.txt' ), true );
+      t.is ( ignore ( '**/**/**', 'deep/deeper/deepest/foo.txt' ), true );
       t.is ( ignore ( '**/**/**', 'bar.js' ), true );
 
       t.is ( ignore ( 'd*p/foo.js', 'deep/foo.js', false ), true );

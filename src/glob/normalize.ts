@@ -3,10 +3,10 @@
 
 const normalize = ( glob: string ): string => {
 
-  // Unescaping leading "!" or "#"
-  glob = glob.replace ( /^\\(!|#)/, '$1' );
   // Trimming unescaped trailing whitespace
   glob = glob.replace ( /((?:\\\s)*)\s*$/, ( $0, $1 ) => $1.replaceAll ( '\\', '' ) );
+  // Unescaping non-special characters
+  glob = glob.replace ( /\\([^*?\[\]])/g, '$1' );
   // Trimming trailing slash //TODO: Handle this instead
   glob = glob.replace ( /\/$/, '' );
   // Collapsing globstars
