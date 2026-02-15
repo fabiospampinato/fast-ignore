@@ -7,7 +7,7 @@ Note: terminal slashes on globs are ignored for now.
 ## Install
 
 ```sh
-npm install --save fast-ignore
+npm install fast-ignore
 ```
 
 ## Usage
