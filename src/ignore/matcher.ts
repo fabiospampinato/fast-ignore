@@ -4,7 +4,7 @@
 import compile from './compile';
 import parse from './parse';
 import tick from './tick';
-import type {Node, Options} from '../types';
+import type {Node, Options, Tick} from '../types';
 
 /* MAIN */
 
@@ -16,7 +16,7 @@ const matcher = ( ignore: string | string[], options: Options = {} ): (( fileRel
   if ( !tiers.length ) return () => false;
 
   const root = compile ( tiers, options );
-  const cache: [segment: string, [nodesNext: Node[], negative: boolean, strength: number]][] = []; //TODO: What is this kind of cache called??
+  const cache: [segment: string, Tick][] = []; // Prefix-caching tick outputs by segment
 
   return ( fileRelativePath: string ): boolean => { //TODO: Add an "isDirectory" option here, to properly account for globs ending with a slash
 
@@ -44,8 +44,8 @@ const matcher = ( ignore: string | string[], options: Options = {} ): (( fileRel
       segmentNth += 1;
 
       const cached = ( segmentNth < cache.length - 1 ) ? cache[segmentNth] : undefined;
-      const cachedResult: [Node[], boolean, number] | undefined = cacheable && cached && cached[0] === segment ? cached[1] : undefined;
-      const result = cachedResult || tick ( nodes, segment );
+      const cachedResult: Tick | undefined = cacheable && cached && cached[0] === segment ? cached[1] : undefined;
+      const result: Tick = cachedResult || tick ( nodes, segment );
 
       cacheable = !!cachedResult;
 

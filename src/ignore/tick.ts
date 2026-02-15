@@ -1,13 +1,13 @@
 
 /* IMPORT */
 
-import type {Node} from '../types';
+import type {Node, Tick} from '../types';
 
 /* MAIN */
 
 // This function basically moves each pointer forward on the trie by just 1 non-globstar step, if possible
 
-const tick = ( nodes: Node[], segment: string ): [nodesNext: Node[], negative: boolean, strenght: number] => {
+const tick = ( nodes: Node[], segment: string ): Tick => {
 
   const nodesCurr: Node[] = nodes.slice ();
   const nodesNext: Node[] = [];
@@ -15,7 +15,7 @@ const tick = ( nodes: Node[], segment: string ): [nodesNext: Node[], negative: b
   let negative = false;
   let strength = -1;
 
-  for ( let ni = 0; ni < nodesCurr.length; ni++ ) {
+  for ( let ni = 0; ni < nodesCurr.length; ni++ ) { // Ticking from each node
 
     const node = nodesCurr[ni];
     const {children} = node;

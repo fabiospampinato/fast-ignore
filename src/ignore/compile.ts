@@ -11,7 +11,7 @@ const compile = ( tiers: Glob[][], options: Options ): Node => {
   const caseSensitive = options.caseSensitive ?? false;
   const root: Node = { id: '', globstar: false, negative: false, strength: -1, tier: -1, match: () => false, children: [] };
 
-  let scounter = 0;
+  let strengthCounter = 0;
 
   for ( let ti = 0, tl = tiers.length; ti < tl; ti++ ) {
 
@@ -32,7 +32,7 @@ const compile = ( tiers: Glob[][], options: Options ): Node => {
         const globstar = ( id === '**' );
         const terminal = ( si === sl - 1 );
         const negative = glob.negative;
-        const strength = ( terminal ? scounter++ : -1 );
+        const strength = ( terminal ? strengthCounter++ : -1 );
         const match = matcher ( id, caseSensitive );
         const children: Node[] = [];
         const node = { id, globstar, negative, strength, tier, match, children };

@@ -20,6 +20,12 @@ type Options = {
   caseSensitive?: boolean
 };
 
+type Tick = [
+  nodesNext: Node[],
+  negative: boolean,
+  strength: number
+];
+
 /* EXPORT */
 
-export type {Glob, Node, Options};
+export type {Glob, Node, Options, Tick};

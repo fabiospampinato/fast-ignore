@@ -10,8 +10,6 @@ const passthrough = ( match: string ) => match;
 
 /* MAIN */
 
-//TODO: Maybe avoid using grammex for this, to shave ~3kb off
-
 const Escaped = match ( /\\./, passthrough );
 const Escape = match ( /[$.*+?^(){}[\]\|]/, escape );
 const Passthrough = match ( /./, passthrough );
