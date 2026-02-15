@@ -33,10 +33,10 @@ const matcher = ( glob: string, caseSensitive: boolean ): (( segment: string ) =
 
     } else {
 
-      const globLowerCase = glob.toLowerCase ();
-      const globLength = globLowerCase.length;
+      const re = new RegExp ( `^${escapeRegExp ( glob )}$`, 'i' );
+      const globLength = glob.length;
 
-      return ( segment: string ) => segment.length === globLength && ( segment.toLowerCase () === globLowerCase );
+      return ( segment: string ) => segment.length === globLength && re.test ( segment );
 
     }
 
@@ -55,8 +55,9 @@ const matcher = ( glob: string, caseSensitive: boolean ): (( segment: string ) =
     } else {
 
       const re = new RegExp ( `${escapeRegExp ( end )}$`, 'i' );
+      const endLength = end.length;
 
-      return ( segment: string ) => re.test ( segment );
+      return ( segment: string ) => segment.length >= endLength && re.test ( segment );
 
     }
 
@@ -75,8 +76,9 @@ const matcher = ( glob: string, caseSensitive: boolean ): (( segment: string ) =
     } else {
 
       const re = new RegExp ( `^${escapeRegExp ( start )}`, 'i' );
+      const startLength = start.length;
 
-      return ( segment: string ) => re.test ( segment );
+      return ( segment: string ) => segment.length >= startLength && re.test ( segment );
 
     }
 
