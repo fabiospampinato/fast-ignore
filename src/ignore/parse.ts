@@ -19,11 +19,13 @@ const parse = ( ignore: string ): Glob[] => {
     if ( content.startsWith ( '#' ) ) continue;
 
     const negative = content.startsWith ( '!' );
+    const directory = content.endsWith ( '/' );
 
     content = negative ? content.slice ( 1 ) : content;
+    content = directory ? content.slice ( 0, -1 ) : content;
     content = normalize ( content );
 
-    const glob = { content, negative };
+    const glob = { content, directory, negative };
 
     globs.push ( glob );
 

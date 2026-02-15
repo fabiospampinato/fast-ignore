@@ -4,11 +4,11 @@
 import compile from './compile';
 import parse from './parse';
 import tick from './tick';
-import type {Node, Options, Tick} from '../types';
+import type {Options, Tick} from '../types';
 
 /* MAIN */
 
-const matcher = ( ignore: string | string[], options: Options = {} ): (( fileRelativePath: string ) => boolean) => {
+const matcher = ( ignore: string | string[], options: Options = {} ): (( relativePath: string, isDirectory?: boolean ) => boolean) => {
 
   const ignores = Array.isArray ( ignore ) ? ignore : [ignore];
   const tiers = ignores.map ( parse ).filter ( tier => !!tier.length );
@@ -16,12 +16,12 @@ const matcher = ( ignore: string | string[], options: Options = {} ): (( fileRel
   if ( !tiers.length ) return () => false;
 
   const root = compile ( tiers, options );
-  const cache: [segment: string, Tick][] = []; // Prefix-caching tick outputs by segment
+  const cache: [result: Tick, segment: string, isSegmentDirectory: boolean][] = []; // Prefix-caching tick outputs by segment
 
-  return ( fileRelativePath: string ): boolean => { //TODO: Add an "isDirectory" option here, to properly account for globs ending with a slash
+  return ( relativePath: string, isDirectory: boolean = false ): boolean => {
 
-    const sep = fileRelativePath.includes ( '/' ) ? '/' : '\\';
-    const length = fileRelativePath.length;
+    const sep = relativePath.includes ( '/' ) ? '/' : '\\';
+    const length = relativePath.length;
 
     let nodes = [root];
     let cacheable = true;
@@ -30,31 +30,34 @@ const matcher = ( ignore: string | string[], options: Options = {} ): (( fileRel
     let segmentIndexNext = 0;
     let segmentNth = -1;
     let segment = '';
+    let isSegmentDirectory = false;
 
     while ( segmentIndex < length ) {
 
-      segmentIndexNext = fileRelativePath.indexOf ( sep, segmentIndex );
+      segmentIndexNext = relativePath.indexOf ( sep, segmentIndex );
       segmentIndexNext = ( segmentIndexNext === -1 ) ? length : segmentIndexNext;
 
-      segment = fileRelativePath.slice ( segmentIndex, segmentIndexNext );
+      segment = relativePath.slice ( segmentIndex, segmentIndexNext );
       segmentIndex = segmentIndexNext + 1;
+      isSegmentDirectory = ( segmentIndex < length ) || isDirectory;
 
       if ( !segment.length ) continue; // Consecutive slash
 
       segmentNth += 1;
 
       const cached = ( segmentNth < cache.length - 1 ) ? cache[segmentNth] : undefined;
-      const cachedResult: Tick | undefined = cacheable && cached && cached[0] === segment ? cached[1] : undefined;
-      const result: Tick = cachedResult || tick ( nodes, segment );
+      const cachedResult: Tick | undefined = cacheable && cached && cached[1] === segment && cached[2] === isSegmentDirectory ? cached[0] : undefined;
+      const result: Tick = cachedResult || tick ( nodes, segment, isSegmentDirectory );
 
       cacheable = !!cachedResult;
 
       if ( !cachedResult ) {
         if ( cached ) {
-          cached[0] = segment;
-          cached[1] = result;
+          cached[0] = result;
+          cached[1] = segment;
+          cached[2] = isSegmentDirectory;
         } else {
-          cache[segmentNth] = [segment, result];
+          cache[segmentNth] = [result, segment, isSegmentDirectory];
         }
       }
 

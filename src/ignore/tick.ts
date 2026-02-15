@@ -7,7 +7,7 @@ import type {Node, Tick} from '../types';
 
 // This function basically moves a pointer forward on the trie by just 1 non-globstar step, if possible
 
-const tickNode = ( result: Tick, node: Node, segment: string ): void => {
+const tickNode = ( result: Tick, node: Node, segment: string, isSegmentDirectory: boolean ): void => {
 
   const {children} = node;
 
@@ -17,7 +17,7 @@ const tickNode = ( result: Tick, node: Node, segment: string ): void => {
 
     if ( !child.match ( segment ) ) continue;
 
-    if ( child.strength >= result.strength ) { // Stronger result found
+    if ( child.strength >= result.strength && ( !child.directory || isSegmentDirectory ) ) { // Stronger result found
 
       result.negative = child.negative;
       result.strength = child.strength;
@@ -28,7 +28,7 @@ const tickNode = ( result: Tick, node: Node, segment: string ): void => {
 
       if ( child.globstar ) { // Keep going for this pointer within this tick
 
-        tickNode ( result, child, segment );
+        tickNode ( result, child, segment, isSegmentDirectory );
 
       } else { // Stopping for this pointer within this tick
 
@@ -42,7 +42,7 @@ const tickNode = ( result: Tick, node: Node, segment: string ): void => {
 
   if ( node.globstar ) { // Keep matching self
 
-    if ( node.strength >= result.strength ) { // Stronger result found
+    if ( node.strength >= result.strength && ( !node.directory || isSegmentDirectory ) ) { // Stronger result found
 
       result.negative = node.negative;
       result.strength = node.strength;
@@ -57,13 +57,13 @@ const tickNode = ( result: Tick, node: Node, segment: string ): void => {
 
 // This function basically moves each pointer forward on the trie by just 1 non-globstar step, if possible
 
-const tick = ( nodes: Node[], segment: string ): Tick => {
+const tick = ( nodes: Node[], segment: string, isSegmentDirectory: boolean ): Tick => {
 
   const result: Tick = { nodes: [], negative: false, strength: -1 };
 
   for ( let i = 0, l = nodes.length; i < l; i++ ) { // Ticking from each node
 
-    tickNode ( result, nodes[i], segment );
+    tickNode ( result, nodes[i], segment, isSegmentDirectory );
 
   }
 

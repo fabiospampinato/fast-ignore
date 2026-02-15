@@ -8,7 +8,7 @@ import toIgnoreMatch from '../dist/ignore/matcher.js';
 /* HELPERS */
 
 const glob = ( glob, segment ) => toGlobMatch ( glob, true )( segment );
-const ignore = ( ignore, fileRelativePath, caseSensitive ) => toIgnoreMatch ( ignore, { caseSensitive } )( fileRelativePath );
+const ignore = ( ignore, relativePath, caseSensitive, isDirectory ) => toIgnoreMatch ( ignore, { caseSensitive } )( relativePath, isDirectory );
 
 /* MAIN */
 
@@ -252,6 +252,35 @@ describe ( 'Fast Ignore', () => {
       t.is ( ignore ( ['deep', '!deep/foo.js'], 'deep/foo.js' ), true );
       t.is ( ignore ( ['deep', '!deep/foo.js'], 'deeper/deep/foo.js' ), true );
       t.is ( ignore ( ['deep', '!deep/foo.js'], 'deeper/deep/bar.js' ), true );
+
+    });
+
+    it ( 'works with directory-only patterns', t => {
+
+      t.is ( ignore ( 'build/', 'build/foo.js' ), true );
+      t.is ( ignore ( 'build/', 'deep/build/foo.js' ), true );
+
+      t.is ( ignore ( 'build/', 'build' ), false );
+      t.is ( ignore ( 'build/', 'build', false, false ), false );
+      t.is ( ignore ( 'build/', 'build', false, true ), true );
+      t.is ( ignore ( 'build/', 'deep/build', false, false ), false );
+      t.is ( ignore ( 'build/', 'deep/build', false, true ), true );
+
+      t.is ( ignore ( 'build', 'build' ), true );
+      t.is ( ignore ( 'build', 'build', false, false ), true );
+      t.is ( ignore ( 'build', 'build', false, true ), true );
+
+      t.is ( ignore ( '/build/', 'build/foo.js' ), true );
+      t.is ( ignore ( '/build/', 'build', false, false ), false );
+      t.is ( ignore ( '/build/', 'build', false, true ), true );
+      t.is ( ignore ( '/build/', 'deep/build/foo.js' ), false );
+
+      t.is ( ignore ( '**/logs/', 'logs/debug.log' ), true );
+      t.is ( ignore ( '**/logs/', 'logs', false, true ), true );
+      t.is ( ignore ( '**/logs/', 'logs', false, false ), false );
+      t.is ( ignore ( '**/logs/', 'src/logs/debug.log' ), true );
+      t.is ( ignore ( '**/logs/', 'src/logs', false, true ), true );
+      t.is ( ignore ( '**/logs/', 'src/logs', false, false ), false );
 
     });
 

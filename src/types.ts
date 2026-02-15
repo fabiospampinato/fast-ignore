@@ -3,11 +3,13 @@
 
 type Glob = {
   content: string,
+  directory: boolean,
   negative: boolean
 };
 
 type Node = {
   id: string,
+  directory: boolean,
   globstar: boolean,
   negative: boolean,
   strength: number,
